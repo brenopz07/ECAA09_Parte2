@@ -6,7 +6,7 @@
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">Novo Problema</div>
             <div class="card-body">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-primary w-100">Registrar</button>
@@ -21,6 +21,9 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ problema.modelo_carro }} - {{ problema.titulo }}</h5>
                     <p class="card-text">{{ problema.descricao }}</p>
+                    {% if problema.imagem %}
+                        <img src="{{ problema.imagem.url }}" alt="Imagem do problema" class="img-fluid rounded mb-2" style="max-width: 300px;">
+                    {% endif %}
                     <span class="badge {% if problema.status == 'ABERTO' %}bg-danger{% elif problema.status == 'ANDAMENTO' %}bg-warning{% else %}bg-success{% endif %}">
                         {{ problema.get_status_display }}
                     </span>

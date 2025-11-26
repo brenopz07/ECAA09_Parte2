@@ -1,7 +1,20 @@
+def signup(request):
+    # Apenas renderiza a tela de escolha
+    return render(request, 'registration/signup.html', {'tipo': None})
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from .forms import ClienteSignUpForm, ProblemaForm, OficinaPerfilForm
+from .forms import ClienteSignUpForm, OficinaSignUpForm, ProblemaForm, OficinaPerfilForm
+def signup_oficina(request):
+    if request.method == 'POST':
+        form = OficinaSignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('dashboard_oficina')
+    else:
+        form = OficinaSignUpForm()
+    return render(request, 'registration/signup.html', {'form': form, 'tipo': 'Oficina'})
 from .models import Problema, User, PerfilOficina
 
 def home(request):
@@ -27,7 +40,7 @@ def signup_cliente(request):
 def dashboard_cliente(request):
     problemas = Problema.objects.filter(cliente=request.user).order_by('-data_criacao')
     if request.method == 'POST':
-        form = ProblemaForm(request.POST)
+        form = ProblemaForm(request.POST, request.FILES)
         if form.is_valid():
             problema = form.save(commit=False)
             problema.cliente = request.user
